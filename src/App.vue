@@ -1,11 +1,5 @@
-<script setup lang="ts">
-import Home from "./pages/Home.vue";
-import Header from "./components/Header.vue";
-import Footer from "./components/Footer.vue";
-</script>
-
 <template>
-  <div class="relative min-h-screen w-full flex flex-col justify-between">
+  <div class="relative flex flex-col justify-between w-full min-h-screen">
     <div class="w-full">
       <Header />
       <Home />
@@ -14,4 +8,8 @@ import Footer from "./components/Footer.vue";
   </div>
 </template>
 
-<style scoped></style>
+<script setup lang="ts">
+import Home from "./pages/Home.vue";
+import Header from "./components/Header.vue";
+import Footer from "./components/Footer.vue";
+</script>
