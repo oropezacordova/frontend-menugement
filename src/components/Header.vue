@@ -27,19 +27,15 @@
         </ul>
       </nav>
     </div>
-    <div class="flex gap-2 w-max max-md:invisible">
-      <SignUp />
-      <LogIn />
-      <LogOut />
+    <div class="flex gap-2 w-max">
+      <DropdownUser />
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
 import { RouterLink } from "vue-router";
-import LogIn from "./LogIn.vue";
-import SignUp from "./SignUp.vue";
-import LogOut from "./LogOut.vue";
+import DropdownUser from "./DropdownUser.vue";
 </script>
 
 <style scoped>

@@ -1,5 +1,5 @@
 <template>
-  <div class="relative flex flex-col justify-between w-full min-h-screen">
+  <div class="flex flex-col justify-between w-full min-h-screen bg-slate-50">
     <div class="w-full">
       <Header />
       <Home />

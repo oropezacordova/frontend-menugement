@@ -6,6 +6,7 @@ body {
   font-family: Roboto;
   min-width: 300px;
 }
+
 /* width */
 ::-webkit-scrollbar {
   width: 5px;

@@ -1,6 +1,6 @@
 <template>
   <button
-    class="flex gap-2 px-2 py-1 text-sm font-medium border border-white rounded-md text-amber-800 hover:text-white hover:bg-amber-600 w-max"
+    class="flex w-full gap-2 px-2 py-1 text-sm font-medium border border-white rounded-md text-amber-800 hover:text-white hover:bg-amber-600"
     @click="open = !open"
     v-if="!authStore.token"
   >
@@ -11,12 +11,18 @@
   </button>
   <div
     v-if="open"
-    class="fixed top-0 left-0 flex items-center justify-center visible w-screen h-screen p-2 bg-black/50 backdrop-blur-sm modal"
+    class="fixed top-0 left-0 flex items-center justify-center w-full h-screen p-2 bg-black/50 backdrop-blur-sm"
   >
     <div
-      class="relative flex flex-col w-full max-w-sm gap-5 p-5 bg-white rounded-md"
+      class="relative flex flex-col w-full max-w-sm max-h-full gap-5 p-5 overflow-auto bg-white rounded-md"
     >
-      <button class="absolute top-2 right-2" @click="open = false">
+      <button
+        class="absolute top-2 right-2"
+        @click="
+          open = false;
+          emit('update:openDropdown', false);
+        "
+      >
         <i class="bi bi-x-lg"></i>
       </button>
       <div class="text-3xl font-bold text-center text-amber-900">
@@ -74,6 +80,9 @@
 import { useAuthStore, type SignUp } from "@/stores/AuthStore";
 import { reactive, ref } from "vue";
 
+const emit = defineEmits<{
+  (e: "update:openDropdown", openDropdown: boolean): void;
+}>();
 const open = ref(false);
 const authStore = useAuthStore();
 const signup = reactive<SignUp>({
@@ -89,14 +98,9 @@ const login = async () => {
     signup.username = "";
     signup.email = "";
     signup.password = "";
+    emit("update:openDropdown", false);
   } catch (error) {
     console.log(error);
   }
 };
 </script>
-
-<style scoped>
-.modal {
-  min-width: 300px;
-}
-</style>

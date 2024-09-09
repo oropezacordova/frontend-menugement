@@ -1,6 +1,9 @@
 <template>
   <main class="container flex flex-col gap-5 p-5 m-auto">
-    <div class="text-3xl font-medium">Recipes</div>
+    <div class="flex items-center justify-between">
+      <div class="text-3xl font-medium">Recipes</div>
+      <FormRecipe />
+    </div>
     <div v-if="recipeStore.recipes">
       <Card
         v-for="recipe in recipeStore.recipes"
@@ -14,7 +17,8 @@
 </template>
 
 <script setup lang="ts">
-import Card from "@/components/Card.vue";
+import FormRecipe from "@/components/FormRecipe.vue";
+import Card from "@/components/RecipeCard.vue";
 import { useRecipeStore } from "@/stores/RecipeStore";
 import { onMounted, ref } from "vue";
 
