@@ -2,7 +2,10 @@
   <div
     class="flex flex-col w-full bg-white rounded-lg shadow-lg max-w-72 min-w-40"
   >
-    <img :src="url + props.recipe.files[0]" class="rounded-lg" />
+    <img
+      :src="url + props.recipe.files[0]"
+      class="object-cover rounded-lg h-60"
+    />
     <div class="flex flex-col gap-2 p-2">
       <RouterLink to="/" class="text-xl font-semibold text-amber-900">
         {{ props.recipe.title }}
