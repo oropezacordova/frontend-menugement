@@ -40,6 +40,7 @@
               placeholder="Content"
               class="w-full px-2 py-1 rounded-lg ring-2 ring-amber-600 focus:outline-none focus:ring-amber-800"
               v-model="recipe.content"
+              rows="4"
               required
             ></textarea>
           </div>
@@ -78,7 +79,7 @@
                     • {{ ingredient }}
                   </div>
                   <div
-                    class="p-1 text-xs text-white rounded-lg cursor-pointer bg-amber-800"
+                    class="p-1 text-xs text-white rounded-sm cursor-pointer bg-amber-800"
                     @click="recipe.ingredients.splice(index, 1)"
                   >
                     <i class="pi pi-trash"></i>
@@ -97,6 +98,7 @@
                 placeholder="Instructions"
                 class="w-full px-2 py-1 rounded-lg ring-2 ring-amber-600 focus:outline-none focus:ring-amber-800"
                 v-model="newInstruction"
+                rows="3"
               ></textarea>
               <div
                 class="p-2 text-white rounded-lg cursor-pointer h-min bg-amber-800"
@@ -120,7 +122,7 @@
                     {{ index + 1 }}. {{ instruction }}
                   </div>
                   <div
-                    class="p-1 text-xs text-white rounded-lg cursor-pointer bg-amber-800"
+                    class="p-1 text-xs text-white rounded-sm cursor-pointer bg-amber-800"
                     @click="recipe.instructions.splice(index, 1)"
                   >
                     <i class="pi pi-trash"></i>
@@ -138,6 +140,7 @@
               accept="image/*"
               class="block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100"
               @change="addFiles"
+              required
             />
           </div>
           <div class="flex flex-col gap-2">
@@ -182,30 +185,29 @@ const authStore = useAuthStore();
 const open = ref(false);
 const newIngredient = ref("");
 const newInstruction = ref("");
+const files = ref<File[]>([]);
 const recipe = reactive<CreateRecipe>({
   title: "",
   content: "",
   ingredients: [],
   instructions: [],
-  files: [],
   category: "",
 });
 
 onMounted(async () => {
   await categoryStore.getCategories();
-  recipe.category = categoryStore.categories[0].id.toString();
 });
 
 const addFiles = (event: Event) => {
-  const files = (event.target as HTMLInputElement).files;
-  if (files) {
-    recipe.files.push(...Array.from(files));
+  const arrayFiles = (event.target as HTMLInputElement).files;
+  if (arrayFiles) {
+    files.value.push(...Array.from(arrayFiles));
   }
 };
 
 const addRecipe = async () => {
   try {
-    await recipeStore.addRecipe(recipe);
+    await recipeStore.addRecipe(recipe, files.value);
     close();
   } catch (error) {
     console.log(error);
@@ -218,7 +220,7 @@ const close = () => {
   recipe.content = "";
   recipe.ingredients = [];
   recipe.instructions = [];
-  recipe.files = [];
   recipe.category = "";
+  files.value = [];
 };
 </script>

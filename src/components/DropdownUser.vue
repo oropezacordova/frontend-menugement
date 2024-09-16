@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div ref="dropdown">
     <button
       class="px-2 py-1 bg-white rounded-full hover:bg-amber-200 text-amber-900"
-      @click="open = !open"
+      @click="toggleDropdown"
     >
       <i class="pi pi-user"></i>
     </button>
@@ -16,6 +16,12 @@
         <li>
           <SignUp @update:openDropdown="open = $event" />
         </li>
+        <RouterLink
+          to="/profile"
+          class="flex w-full gap-2 px-2 py-1 text-sm font-medium border border-white rounded-md text-amber-800 hover:text-white hover:bg-amber-600"
+        >
+          <li>My Profile</li>
+        </RouterLink>
         <li>
           <LogOut @update:openDropdown="open = $event" />
         </li>
@@ -25,10 +31,29 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, onBeforeUnmount } from "vue";
 import LogIn from "./LogIn.vue";
 import SignUp from "./SignUp.vue";
 import LogOut from "./LogOut.vue";
-import { ref } from "vue";
 
 const open = ref(false);
+const dropdown = ref<HTMLElement | null>(null);
+
+const toggleDropdown = () => {
+  open.value = !open.value;
+};
+
+const handleClickOutside = (event: MouseEvent) => {
+  if (dropdown.value && !dropdown.value.contains(event.target as Node)) {
+    open.value = false;
+  }
+};
+
+onMounted(() => {
+  document.addEventListener("click", handleClickOutside);
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener("click", handleClickOutside);
+});
 </script>

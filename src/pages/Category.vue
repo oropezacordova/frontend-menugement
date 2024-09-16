@@ -1,8 +1,7 @@
 <template>
   <main class="container flex flex-col gap-5 p-5 m-auto">
     <div class="flex items-center justify-between">
-      <div class="text-3xl font-medium">Recipes</div>
-      <CreateRecipe />
+      <div class="text-3xl font-medium">{{ categoryStore.category.name }}</div>
     </div>
     <div class="w-1/5 min-w-52">
       <label for="search" class="sr-only">Search Recipes</label>
@@ -18,7 +17,7 @@
     <div v-if="loading" class="flex items-center justify-center">
       <i class="pi pi-spin pi-spinner text-amber-900"></i>
     </div>
-    <div class="flex max-sm:justify-center" v-else-if="filteredRecipes.length > 0">
+    <div v-else-if="filteredRecipes?.length > 0">
       <div
         class="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
       >
@@ -29,33 +28,46 @@
         />
       </div>
     </div>
-    <div v-else class="text-center">No recipes found</div>
+    <div v-else class="text-center">No recipes found in this category</div>
   </main>
 </template>
 
 <script setup lang="ts">
-import CreateRecipe from "@/components/CreateRecipe.vue";
 import RecipeCard from "@/components/RecipeCard.vue";
-import { useRecipeStore } from "@/stores/RecipeStore";
-import { computed, onMounted, ref } from "vue";
+import { useCategoryStore } from "@/stores/CategoryStore";
+import { ref, onMounted, watch, computed } from "vue";
+import { useRoute } from "vue-router";
 
-const recipeStore = useRecipeStore();
+const categoryStore = useCategoryStore();
+const route = useRoute();
 const loading = ref(false);
 const search = ref("");
 
-onMounted(async () => {
+const fetchCategory = async (id: string | string[]) => {
   loading.value = true;
-  await recipeStore.getRecipes();
+  await categoryStore.getCategory(Number(id));
   loading.value = false;
+};
+
+onMounted(async () => {
+  await fetchCategory(route.params.id);
 });
+
+watch(
+  () => route.params.id,
+  async (newId) => {
+    await fetchCategory(newId);
+    search.value = "";
+  }
+);
 
 const filteredRecipes = computed(() => {
   if (search.value.length > 0) {
-    return recipeStore.recipes.filter((recipe) => {
+    return categoryStore.category.recipes.filter((recipe) => {
       return recipe.title.toLowerCase().includes(search.value.toLowerCase());
     });
   } else {
-    return recipeStore.recipes;
+    return categoryStore.category.recipes;
   }
 });
 </script>

@@ -22,13 +22,13 @@ export interface CreateRecipe {
   content: string;
   ingredients: string[];
   instructions: string[];
-  files: File[];
   category: string;
 }
 
 export const useRecipeStore = defineStore("RecipeStore", {
   state: () => ({
     recipes: [] as Recipe[],
+    recipe: {} as Recipe,
   }),
   actions: {
     async getRecipes() {
@@ -37,20 +37,39 @@ export const useRecipeStore = defineStore("RecipeStore", {
       );
       this.recipes = response.data;
     },
-    async addRecipe(recipe: CreateRecipe) {
-      const formData = new FormData();
-      formData.append("title", recipe.title);
-      formData.append("content", recipe.content);
-      recipe.ingredients.forEach((ingredient) =>
-        formData.append("ingredients", ingredient)
+
+    async getRecipe(id: number) {
+      const response = await axios.get<Recipe>(
+        `http://localhost:8080/recipes/${id}`
       );
-      recipe.instructions.forEach((instruction) =>
-        formData.append("instructions", instruction)
-      );
-      formData.append("category", recipe.category);
-      recipe.files.forEach((file) => formData.append("files", file));
+      this.recipe = response.data;
+    },
+
+    async addRecipe(recipe: CreateRecipe, files: File[]) {
       const response = await axios.post<Recipe>(
         "http://localhost:8080/recipes",
+        {
+          title: recipe.title,
+          content: recipe.content,
+          ingredients: recipe.ingredients,
+          instructions: recipe.instructions,
+          category: recipe.category,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("accessToken")}`,
+          },
+        }
+      );
+      this.upload(response.data.id, files);
+    },
+    async upload(recipeId: number, files: File[]) {
+      const formData = new FormData();
+      files.forEach((file) => {
+        formData.append("files", file);
+      });
+      const response = await axios.post<Recipe>(
+        `http://localhost:8080/recipes/${recipeId}/upload`,
         formData,
         {
           headers: {

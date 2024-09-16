@@ -12,12 +12,7 @@
           >
             <li>Recipes</li>
           </RouterLink>
-          <RouterLink
-            to="/"
-            class="px-2 py-1 rounded-lg hover:bg-amber-600 hover:text-white text-amber-900"
-          >
-            <li>Categories</li>
-          </RouterLink>
+          <DropdownCategories />
           <RouterLink
             to="/"
             class="px-2 py-1 rounded-lg hover:bg-amber-600 hover:text-white text-amber-900"
@@ -36,6 +31,7 @@
 <script setup lang="ts">
 import { RouterLink } from "vue-router";
 import DropdownUser from "./DropdownUser.vue";
+import DropdownCategories from "./DropdownCategories.vue";
 </script>
 
 <style scoped>
