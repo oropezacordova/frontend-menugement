@@ -3,7 +3,9 @@
     class="sticky top-0 flex items-center justify-between h-16 p-5 rounded-b-lg bg-amber-500/90"
   >
     <div class="flex items-center gap-10">
-      <div class="text-3xl font-bold text-amber-900 menugement">Menugement</div>
+      <RouterLink to="/" class="text-3xl font-bold text-amber-900 menugement">
+        Menugement
+      </RouterLink>
       <nav class="my-auto">
         <ul class="flex gap-4 text-base font-medium max-md:hidden">
           <RouterLink

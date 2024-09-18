@@ -19,6 +19,8 @@
         <RouterLink
           to="/profile"
           class="flex w-full gap-2 px-2 py-1 text-sm font-medium border border-white rounded-md text-amber-800 hover:text-white hover:bg-amber-600"
+          v-on="{ click: toggleDropdown }"
+          v-if="authStore.token"
         >
           <li>My Profile</li>
         </RouterLink>
@@ -35,7 +37,9 @@ import { ref, onMounted, onBeforeUnmount } from "vue";
 import LogIn from "./LogIn.vue";
 import SignUp from "./SignUp.vue";
 import LogOut from "./LogOut.vue";
+import { useAuthStore } from "@/stores/AuthStore";
 
+const authStore = useAuthStore();
 const open = ref(false);
 const dropdown = ref<HTMLElement | null>(null);
 

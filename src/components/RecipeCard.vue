@@ -9,19 +9,27 @@
       />
     </div>
     <div class="flex flex-col gap-2 p-2">
-      <div
-        class="text-xl font-semibold text-amber-900 cursor-pointer"
-        @click="router.push(`/recipes/${props.recipe.id}`)"
-      >
-        {{ props.recipe.title }}
+      <div class="flex justify-between">
+        <div
+          class="text-xl font-semibold text-amber-900 cursor-pointer"
+          @click="router.push(`/recipes/${props.recipe.id}`)"
+        >
+          {{ props.recipe.title }}
+        </div>
+        <div v-if="route.fullPath === '/profile'">
+          <EditRecipe :recipe="props.recipe" />
+        </div>
       </div>
       <div class="flex gap-2 w-max">
-        <RouterLink :to="`/categories/${props.recipe.category.id}`">
+        <RouterLink
+          :to="`/categories/${props.recipe.category.id}`"
+          v-if="!route.fullPath.includes('categories')"
+        >
           <Chip>
             {{ props.recipe.category.name }}
           </Chip>
         </RouterLink>
-        <RouterLink to="/">
+        <RouterLink to="/" v-if="!route.fullPath.includes('profile')">
           <Chip>
             <i class="pi pi-user"></i>{{ props.recipe.user.username }}
           </Chip>
@@ -39,13 +47,15 @@
 import type { Recipe } from "@/stores/RecipeStore";
 import Chip from "./Chip.vue";
 import { computed } from "vue";
-import { RouterLink, useRouter } from "vue-router";
+import { RouterLink, useRoute, useRouter } from "vue-router";
+import EditRecipe from "../components/EditRecipe.vue";
 
 const router = useRouter();
+const route = useRoute();
+const url = import.meta.env.VITE_BASE_URL;
 const props = defineProps<{
   recipe: Recipe;
 }>();
-const url = import.meta.env.VITE_BASE_URL;
 
 const content = computed(() => {
   if (props.recipe.content.length > 120) {

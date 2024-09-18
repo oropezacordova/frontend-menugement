@@ -25,6 +25,15 @@ export interface CreateRecipe {
   category: string;
 }
 
+export interface UpdateRecipe {
+  title: string;
+  content: string;
+  ingredients: string[];
+  instructions: string[];
+  category: string;
+  deletedImages: string[];
+}
+
 export const useRecipeStore = defineStore("RecipeStore", {
   state: () => ({
     recipes: [] as Recipe[],
@@ -63,12 +72,34 @@ export const useRecipeStore = defineStore("RecipeStore", {
       );
       this.upload(response.data.id, files);
     },
+
+    async updateRecipe(id: number, recipe: UpdateRecipe, files: File[]) {
+      const response = await axios.patch<Recipe>(
+        `http://localhost:8080/recipes/${id}`,
+        {
+          title: recipe.title,
+          content: recipe.content,
+          ingredients: recipe.ingredients,
+          instructions: recipe.instructions,
+          category: recipe.category,
+          deletedImages: recipe.deletedImages,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("accessToken")}`,
+          },
+        }
+      );
+      this.upload(response.data.id, files);
+      window.location.reload();
+    },
+
     async upload(recipeId: number, files: File[]) {
       const formData = new FormData();
       files.forEach((file) => {
         formData.append("files", file);
       });
-      const response = await axios.post<Recipe>(
+      await axios.patch<Recipe>(
         `http://localhost:8080/recipes/${recipeId}/upload`,
         formData,
         {
@@ -77,7 +108,7 @@ export const useRecipeStore = defineStore("RecipeStore", {
           },
         }
       );
-      this.recipes.push(response.data);
+      this.getRecipes();
     },
   },
 });

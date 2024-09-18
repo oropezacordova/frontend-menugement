@@ -15,11 +15,11 @@
           v-for="file in recipeStore.recipe.files"
           :key="file"
           :src="url + file"
-          class="object-cover w-full max-lg:w-96 rounded-lg"
+          class="object-cover w-full max-lg:w-72 rounded-lg"
         />
       </div>
-      <div class="flex flex-col w-9/12 max-lg:w-full">
-        <div class="flex flex-col gap-2 p-5">
+      <div class="flex flex-col w-9/12 p-5 max-lg:w-full">
+        <div class="flex flex-col gap-2">
           <div class="text-3xl font-semibold text-amber-900">
             {{ recipeStore.recipe.title }}
           </div>
@@ -35,7 +35,7 @@
             </Chip>
             <Chip>
               <a :href="'mailto:' + recipeStore.recipe.user?.email">
-                <i class="pi pi-google"></i>
+                <i class="pi pi-envelope"></i>
                 {{ recipeStore.recipe.user?.email }}
               </a>
             </Chip>
@@ -89,11 +89,11 @@ const route = useRoute();
 const router = useRouter();
 const recipeStore = useRecipeStore();
 const loading = ref(false);
-const id = route.params.id;
 const url = import.meta.env.VITE_BASE_URL;
+
 onMounted(async () => {
   loading.value = true;
-  await recipeStore.getRecipe(Number(id));
+  await recipeStore.getRecipe(Number(route.params.id));
   loading.value = false;
 });
 </script>
