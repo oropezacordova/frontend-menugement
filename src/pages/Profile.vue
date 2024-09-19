@@ -28,10 +28,7 @@
       </div>
       <div class="flex flex-col w-9/12 p-5 gap-5 max-lg:w-full">
         <div class="text-3xl font-medium text-amber-900">My Recipes</div>
-        <div
-          class="flex justify-center"
-          v-if="userStore.user.recipes?.length > 0"
-        >
+        <div class="flex" v-if="userStore.user.recipes?.length > 0">
           <div class="grid gap-5 sm:grid-cols-2 md:grid-cols-3">
             <RecipeCard
               v-for="recipe in userStore.user.recipes"

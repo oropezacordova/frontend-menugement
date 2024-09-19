@@ -16,13 +16,7 @@
     <div
       class="relative flex flex-col w-full max-w-sm max-h-full gap-5 p-5 overflow-auto bg-white rounded-md"
     >
-      <button
-        class="absolute top-2 right-2"
-        @click="
-          open = false;
-          emit('update:openDropdown', false);
-        "
-      >
+      <button class="absolute top-2 right-2" @click="close">
         <i class="bi bi-x-lg"></i>
       </button>
       <div class="text-3xl font-bold text-center text-amber-900">
@@ -94,13 +88,17 @@ const signup = reactive<SignUp>({
 const login = async () => {
   try {
     await authStore.signUp(signup);
-    open.value = false;
-    signup.username = "";
-    signup.email = "";
-    signup.password = "";
-    emit("update:openDropdown", false);
+    close();
   } catch (error) {
     console.log(error);
   }
+};
+
+const close = () => {
+  open.value = false;
+  signup.username = "";
+  signup.email = "";
+  signup.password = "";
+  emit("update:openDropdown", false);
 };
 </script>

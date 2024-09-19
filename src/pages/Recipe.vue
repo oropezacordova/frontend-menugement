@@ -15,13 +15,23 @@
           v-for="file in recipeStore.recipe.files"
           :key="file"
           :src="url + file"
-          class="object-cover w-full max-lg:w-72 rounded-lg"
+          class="object-cover w-full max-lg:w-72 max-h-60 rounded-lg"
         />
       </div>
       <div class="flex flex-col w-9/12 p-5 max-lg:w-full">
         <div class="flex flex-col gap-2">
-          <div class="text-3xl font-semibold text-amber-900">
-            {{ recipeStore.recipe.title }}
+          <div class="flex items-center gap-2">
+            <div class="text-3xl font-semibold text-amber-900">
+              {{ recipeStore.recipe.title }}
+            </div>
+            <div
+              v-if="
+                authStore.token &&
+                recipeStore.recipe.user?.id === userStore.user.id
+              "
+            >
+              <EditRecipe />
+            </div>
           </div>
           <div class="text-sm text-justify text-amber-950">
             {{ recipeStore.recipe.content }}
@@ -81,19 +91,27 @@
 
 <script setup lang="ts">
 import Chip from "@/components/Chip.vue";
+import EditRecipe from "@/components/EditRecipe.vue";
+import { useAuthStore } from "@/stores/AuthStore";
 import { useRecipeStore } from "@/stores/RecipeStore";
+import { useUserStore } from "@/stores/UserStore";
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();
 const router = useRouter();
 const recipeStore = useRecipeStore();
+const userStore = useUserStore();
+const authStore = useAuthStore();
 const loading = ref(false);
 const url = import.meta.env.VITE_BASE_URL;
 
 onMounted(async () => {
   loading.value = true;
-  await recipeStore.getRecipe(Number(route.params.id));
+  if (authStore.token) {
+    await userStore.getProfile();
+    await recipeStore.getRecipe(Number(route.params.id));
+  }
   loading.value = false;
 });
 </script>

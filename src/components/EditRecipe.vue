@@ -1,5 +1,5 @@
 <template>
-  <button class="flex gap-2 p-1 text-sm text-amber-900" @click="open = !open">
+  <button class="flex gap-2 p-1 text-lg text-amber-900" @click="openModal">
     <i class="pi pi-pen-to-square"></i>
   </button>
   <div
@@ -9,11 +9,11 @@
     <div
       class="relative flex flex-col w-full max-w-lg max-h-full gap-5 p-5 overflow-auto bg-white rounded-md"
     >
-      <button class="absolute top-2 right-2" @click="close">
+      <button class="absolute top-2 right-2" @click="closeModal">
         <i class="bi bi-x-lg"></i>
       </button>
       <div class="text-3xl font-bold text-center text-amber-900">
-        Update Recipe
+        Add Recipe
       </div>
       <hr />
       <form @submit.prevent="addRecipe" class="flex flex-col gap-8">
@@ -65,15 +65,18 @@
                 Add
               </div>
             </div>
-            <ul v-if="ingredients" class="flex flex-col gap-2">
-              <li v-for="(ingredient, index) in ingredients" :key="index">
+            <ul v-if="recipe.ingredients" class="flex flex-col gap-2">
+              <li
+                v-for="(ingredient, index) in recipe.ingredients"
+                :key="index"
+              >
                 <div class="flex items-center justify-between gap-2">
                   <div class="text-base font-medium truncate">
                     • {{ ingredient }}
                   </div>
                   <div
                     class="p-1 text-xs text-white rounded-sm cursor-pointer bg-amber-800"
-                    @click="ingredients.splice(index, 1)"
+                    @click="recipe.ingredients.splice(index, 1)"
                   >
                     <i class="pi pi-trash"></i>
                   </div>
@@ -105,15 +108,18 @@
                 Add
               </div>
             </div>
-            <ul v-if="instructions" class="flex flex-col gap-2">
-              <li v-for="(instruction, index) in instructions" :key="index">
+            <ul v-if="recipe.instructions" class="flex flex-col gap-2">
+              <li
+                v-for="(instruction, index) in recipe.instructions"
+                :key="index"
+              >
                 <div class="flex items-center justify-between gap-2">
                   <div class="text-base font-medium text-justify truncate">
                     {{ index + 1 }}. {{ instruction }}
                   </div>
                   <div
                     class="p-1 text-xs text-white rounded-sm cursor-pointer bg-amber-800"
-                    @click="instructions.splice(index, 1)"
+                    @click="recipe.instructions.splice(index, 1)"
                   >
                     <i class="pi pi-trash"></i>
                   </div>
@@ -133,17 +139,20 @@
             />
             <div class="flex flex-wrap gap-2">
               <div
-                v-for="(file, index) in images"
+                v-for="(file, index) in recipe.files"
                 :key="index"
                 class="flex relative"
               >
                 <div
                   class="absolute top-1 right-1 text-red-500 text-sm cursor-pointer"
-                  @click="images.splice(index, 1)"
+                  @click="
+                    deletedImages.push(file);
+                    recipe.files.splice(index, 1);
+                  "
                 >
                   <i class="pi pi-trash"></i>
                 </div>
-                <img :src="url + file" class="object-cover w-36 rounded-lg" />
+                <img :src="url + file" class="object-cover w-36 max-h-32 rounded-lg" />
               </div>
             </div>
           </div>
@@ -169,8 +178,9 @@
         <button
           class="flex justify-center gap-2 px-2 py-1 text-base font-medium text-white rounded-md bg-amber-600 hover:bg-amber-600/80"
           type="submit"
+          :disabled="loading"
         >
-          Add Recipe
+          Confirm
         </button>
       </form>
     </div>
@@ -184,22 +194,22 @@ import {
   type Recipe,
   type UpdateRecipe,
 } from "@/stores/RecipeStore";
-import { onMounted, reactive, ref } from "vue";
+import { reactive, ref } from "vue";
+import { useRoute } from "vue-router";
 
+const route = useRoute();
 const recipeStore = useRecipeStore();
 const categoryStore = useCategoryStore();
+const url = import.meta.env.VITE_BASE_URL;
+const loading = ref(false);
 const open = ref(false);
 const newIngredient = ref("");
 const newInstruction = ref("");
 const files = ref<File[]>([]);
-const url = import.meta.env.VITE_BASE_URL;
-const props = defineProps<{
-  recipe: Recipe;
-}>();
-const recipe = ref<Recipe>({ ...props.recipe });
-const images = ref<String[]>([...props.recipe.files]);
-const ingredients = ref<String[]>([...props.recipe.ingredients]);
-const instructions = ref<String[]>([...props.recipe.instructions]);
+const deletedImages = ref<string[]>([]);
+const recipe = ref<Recipe>({
+  ...recipeStore.recipe,
+});
 const updateRecipe = reactive<UpdateRecipe>({
   title: "",
   content: "",
@@ -209,9 +219,33 @@ const updateRecipe = reactive<UpdateRecipe>({
   deletedImages: [],
 });
 
-onMounted(async () => {
+const fetchingData = async () => {
+  await recipeStore.getRecipe(Number(route.params.id));
   await categoryStore.getCategories();
-});
+};
+
+const openModal = async () => {
+  open.value = true;
+  fetchingData();
+  recipe.value = { ...recipeStore.recipe };
+};
+
+const addRecipe = async () => {
+  loading.value = true;
+  try {
+    updateRecipe.title = recipe.value.title;
+    updateRecipe.content = recipe.value.content;
+    updateRecipe.ingredients = recipe.value.ingredients;
+    updateRecipe.instructions = recipe.value.instructions;
+    updateRecipe.category = String(recipe.value.category.id);
+    updateRecipe.deletedImages = deletedImages.value;
+    await recipeStore.updateRecipe(recipe.value.id, updateRecipe, files.value);
+  } catch (error) {
+    console.log(error);
+  }
+  loading.value = false;
+  closeModal();
+};
 
 const addFiles = (event: Event) => {
   const arrayFiles = (event.target as HTMLInputElement).files;
@@ -220,33 +254,15 @@ const addFiles = (event: Event) => {
   }
 };
 
-const addRecipe = async () => {
-  try {
-    updateRecipe.title = recipe.value.title;
-    updateRecipe.content = recipe.value.content;
-    updateRecipe.ingredients = recipe.value.ingredients;
-    updateRecipe.instructions = recipe.value.instructions;
-    updateRecipe.category = String(recipe.value.category.id);
-    updateRecipe.deletedImages = recipe.value.files;
-    await recipeStore.updateRecipe(recipe.value.id, updateRecipe, files.value);
-    close();
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const close = () => {
-  recipe.value = { ...props.recipe };
-  images.value = [...props.recipe.files];
-  ingredients.value = [...props.recipe.ingredients];
-  instructions.value = [...props.recipe.instructions];
-  open.value = false;
+const closeModal = async () => {
   updateRecipe.title = "";
   updateRecipe.content = "";
   updateRecipe.ingredients = [];
   updateRecipe.instructions = [];
   updateRecipe.category = "";
   updateRecipe.deletedImages = [];
+  deletedImages.value = [];
   files.value = [];
+  open.value = false;
 };
 </script>

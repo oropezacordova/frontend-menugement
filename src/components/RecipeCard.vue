@@ -10,15 +10,12 @@
     </div>
     <div class="flex flex-col gap-2 p-2">
       <div class="flex justify-between">
-        <div
+        <RouterLink
+          :to="`/recipes/${props.recipe.id}`"
           class="text-xl font-semibold text-amber-900 cursor-pointer"
-          @click="router.push(`/recipes/${props.recipe.id}`)"
         >
           {{ props.recipe.title }}
-        </div>
-        <div v-if="route.fullPath === '/profile'">
-          <EditRecipe :recipe="props.recipe" />
-        </div>
+        </RouterLink>
       </div>
       <div class="flex gap-2 w-max">
         <RouterLink
@@ -47,10 +44,8 @@
 import type { Recipe } from "@/stores/RecipeStore";
 import Chip from "./Chip.vue";
 import { computed } from "vue";
-import { RouterLink, useRoute, useRouter } from "vue-router";
-import EditRecipe from "../components/EditRecipe.vue";
+import { RouterLink, useRoute } from "vue-router";
 
-const router = useRouter();
 const route = useRoute();
 const url = import.meta.env.VITE_BASE_URL;
 const props = defineProps<{

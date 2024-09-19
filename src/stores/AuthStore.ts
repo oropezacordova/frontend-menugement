@@ -1,7 +1,6 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 import { defineStore } from "pinia";
-import type { User } from "./UserStore";
 
 export interface Credentials {
   email: string;
@@ -38,12 +37,11 @@ export const useAuthStore = defineStore("auth", {
       this.token = response.data.accessToken;
     },
     async signUp(signUp: SignUp) {
-      const response = await axios.post<User>("http://localhost:8080/users", {
+      await axios.post<void>("http://localhost:8080/users", {
         username: signUp.username,
         email: signUp.email,
         password: signUp.password,
       });
-      console.log(response.data);
     },
     removeToken() {
       Cookies.remove("accessToken");

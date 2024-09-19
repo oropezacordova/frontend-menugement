@@ -22,9 +22,14 @@
           v-on="{ click: toggleDropdown }"
           v-if="authStore.token"
         >
-          <li>My Profile</li>
+          <li class="flex items-center gap-2">
+            <span>
+              <i class="pi pi-user"></i>
+            </span>
+            My Profile
+          </li>
         </RouterLink>
-        <li>
+        <li class="w-full">
           <LogOut @update:openDropdown="open = $event" />
         </li>
       </ul>
@@ -34,10 +39,10 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from "vue";
+import { useAuthStore } from "@/stores/AuthStore";
 import LogIn from "./LogIn.vue";
 import SignUp from "./SignUp.vue";
 import LogOut from "./LogOut.vue";
-import { useAuthStore } from "@/stores/AuthStore";
 
 const authStore = useAuthStore();
 const open = ref(false);

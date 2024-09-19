@@ -74,7 +74,7 @@ export const useRecipeStore = defineStore("RecipeStore", {
     },
 
     async updateRecipe(id: number, recipe: UpdateRecipe, files: File[]) {
-      const response = await axios.patch<Recipe>(
+      await axios.patch<Recipe>(
         `http://localhost:8080/recipes/${id}`,
         {
           title: recipe.title,
@@ -90,17 +90,16 @@ export const useRecipeStore = defineStore("RecipeStore", {
           },
         }
       );
-      this.upload(response.data.id, files);
-      window.location.reload();
+      this.upload(id, files);
     },
 
-    async upload(recipeId: number, files: File[]) {
+    async upload(id: number, files: File[]) {
       const formData = new FormData();
       files.forEach((file) => {
         formData.append("files", file);
       });
       await axios.patch<Recipe>(
-        `http://localhost:8080/recipes/${recipeId}/upload`,
+        `http://localhost:8080/recipes/${id}/upload`,
         formData,
         {
           headers: {
@@ -108,6 +107,8 @@ export const useRecipeStore = defineStore("RecipeStore", {
           },
         }
       );
+
+      this.getRecipe(id);
       this.getRecipes();
     },
   },
