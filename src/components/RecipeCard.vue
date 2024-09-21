@@ -17,6 +17,10 @@
           {{ props.recipe.title }}
         </RouterLink>
       </div>
+      <div class="text-xs text-amber-900 flex gap-2 items-center">
+        {{ props.recipe.likes?.length }}
+        <i class="pi pi-heart"></i>
+      </div>
       <div class="flex gap-2 w-max">
         <RouterLink
           :to="`/categories/${props.recipe.category.id}`"

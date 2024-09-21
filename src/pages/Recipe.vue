@@ -37,9 +37,11 @@
             {{ recipeStore.recipe.content }}
           </div>
           <div class="flex flex-wrap gap-2">
-            <Chip>
-              {{ recipeStore.recipe.category?.name }}
-            </Chip>
+            <RouterLink :to="`/categories/${recipeStore.recipe.category?.id}`">
+              <Chip>
+                {{ recipeStore.recipe.category?.name }}
+              </Chip>
+            </RouterLink>
             <Chip>
               <i class="pi pi-user"></i>{{ recipeStore.recipe.user?.username }}
             </Chip>

@@ -3,6 +3,7 @@ import type { Category } from "./CategoryStore";
 import { defineStore } from "pinia";
 import axios from "axios";
 import Cookies from "js-cookie";
+import type { Like } from "./LikeStore";
 
 export interface Recipe {
   id: number;
@@ -14,6 +15,7 @@ export interface Recipe {
   create_at: Date;
   update_at: Date;
   category: Category;
+  likes: Like[];
   user: User;
 }
 

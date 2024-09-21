@@ -7,7 +7,7 @@
     class="fixed top-0 left-0 flex items-center justify-center w-full h-screen p-2 bg-black/50 backdrop-blur-sm"
   >
     <div
-      class="relative flex flex-col w-full max-w-lg max-h-full gap-5 p-5 overflow-auto bg-white rounded-md"
+      class="relative flex flex-col w-full max-w-2xl max-h-full gap-5 p-5 overflow-auto bg-white rounded-md"
     >
       <button class="absolute top-2 right-2" @click="closeModal">
         <i class="bi bi-x-lg"></i>
@@ -152,7 +152,10 @@
                 >
                   <i class="pi pi-trash"></i>
                 </div>
-                <img :src="url + file" class="object-cover w-36 max-h-32 rounded-lg" />
+                <img
+                  :src="url + file"
+                  class="object-cover w-36 max-h-32 rounded-lg"
+                />
               </div>
             </div>
           </div>
@@ -240,11 +243,11 @@ const addRecipe = async () => {
     updateRecipe.category = String(recipe.value.category.id);
     updateRecipe.deletedImages = deletedImages.value;
     await recipeStore.updateRecipe(recipe.value.id, updateRecipe, files.value);
+    closeModal();
   } catch (error) {
     console.log(error);
   }
   loading.value = false;
-  closeModal();
 };
 
 const addFiles = (event: Event) => {
