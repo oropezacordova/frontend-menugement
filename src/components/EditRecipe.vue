@@ -13,7 +13,7 @@
         <i class="bi bi-x-lg"></i>
       </button>
       <div class="text-3xl font-bold text-center text-amber-900">
-        Add Recipe
+        Edit Recipe
       </div>
       <hr />
       <form @submit.prevent="addRecipe" class="flex flex-col gap-8">
@@ -141,10 +141,10 @@
               <div
                 v-for="(file, index) in recipe.files"
                 :key="index"
-                class="flex relative"
+                class="relative flex"
               >
                 <div
-                  class="absolute top-1 right-1 text-red-500 text-sm cursor-pointer"
+                  class="absolute text-sm text-red-500 cursor-pointer top-1 right-1"
                   @click="
                     deletedImages.push(file);
                     recipe.files.splice(index, 1);
@@ -154,7 +154,7 @@
                 </div>
                 <img
                   :src="url + file"
-                  class="object-cover w-36 max-h-32 rounded-lg"
+                  class="object-cover rounded-lg w-36 max-h-32"
                 />
               </div>
             </div>
@@ -223,8 +223,8 @@ const updateRecipe = reactive<UpdateRecipe>({
 });
 
 const fetchingData = async () => {
-  await recipeStore.getRecipe(Number(route.params.id));
-  await categoryStore.getCategories();
+  await recipeStore.findOne(Number(route.params.id));
+  await categoryStore.findAll();
 };
 
 const openModal = async () => {
@@ -242,7 +242,7 @@ const addRecipe = async () => {
     updateRecipe.instructions = recipe.value.instructions;
     updateRecipe.category = String(recipe.value.category.id);
     updateRecipe.deletedImages = deletedImages.value;
-    await recipeStore.updateRecipe(recipe.value.id, updateRecipe, files.value);
+    await recipeStore.update(recipe.value.id, updateRecipe, files.value);
     closeModal();
   } catch (error) {
     console.log(error);
@@ -265,6 +265,8 @@ const closeModal = async () => {
   updateRecipe.category = "";
   updateRecipe.deletedImages = [];
   deletedImages.value = [];
+  newIngredient.value = "";
+  newInstruction.value = "";
   files.value = [];
   open.value = false;
 };

@@ -2,22 +2,22 @@
   <div
     class="flex flex-col w-full bg-white rounded-lg shadow-lg max-w-72 min-w-52"
   >
-    <div class="h-48 w-full">
+    <div class="w-full h-48">
       <img
         :src="url + props.recipe.files[0]"
-        class="rounded-t-lg w-full h-full object-cover"
+        class="object-cover w-full h-full rounded-t-lg"
       />
     </div>
     <div class="flex flex-col gap-2 p-2">
       <div class="flex justify-between">
         <RouterLink
           :to="`/recipes/${props.recipe.id}`"
-          class="text-xl font-semibold text-amber-900 cursor-pointer"
+          class="text-xl font-semibold cursor-pointer text-amber-900"
         >
           {{ props.recipe.title }}
         </RouterLink>
       </div>
-      <div class="text-xs text-amber-900 flex gap-2 items-center">
+      <div class="flex items-center gap-2 text-xs text-amber-900">
         {{ props.recipe.likes?.length }}
         <i class="pi pi-heart"></i>
       </div>

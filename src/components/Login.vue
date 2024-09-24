@@ -77,7 +77,7 @@ const credentials = reactive<Credentials>({
 
 const login = async () => {
   try {
-    await authStore.login(credentials);
+    await authStore.singIn(credentials);
     close();
   } catch (error: any) {
     console.log(error);

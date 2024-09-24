@@ -15,7 +15,7 @@
           v-for="file in recipeStore.recipe.files"
           :key="file"
           :src="url + file"
-          class="object-cover w-full max-lg:w-72 max-h-60 rounded-lg"
+          class="object-cover w-full rounded-lg max-lg:w-72 max-h-60"
         />
       </div>
       <div class="flex flex-col w-9/12 p-5 max-lg:w-full">
@@ -35,6 +35,13 @@
           </div>
           <div class="text-sm text-justify text-amber-950">
             {{ recipeStore.recipe.content }}
+          </div>
+          <div
+            class="flex items-center gap-2 text-sm font-medium text-amber-900"
+            :class="{ 'text-red-500': isLiked }"
+          >
+            <button @click="like"><i class="pi pi-heart"></i></button>
+            {{ recipeStore.recipe.likes?.length }} Likes
           </div>
           <div class="flex flex-wrap gap-2">
             <RouterLink :to="`/categories/${recipeStore.recipe.category?.id}`">
@@ -95,6 +102,7 @@
 import Chip from "@/components/Chip.vue";
 import EditRecipe from "@/components/EditRecipe.vue";
 import { useAuthStore } from "@/stores/AuthStore";
+import { useLikeStore } from "@/stores/LikeStore";
 import { useRecipeStore } from "@/stores/RecipeStore";
 import { useUserStore } from "@/stores/UserStore";
 import { onMounted, ref } from "vue";
@@ -104,16 +112,32 @@ const route = useRoute();
 const router = useRouter();
 const recipeStore = useRecipeStore();
 const userStore = useUserStore();
+const likeStore = useLikeStore();
 const authStore = useAuthStore();
+const isLiked = ref(false);
 const loading = ref(false);
 const url = import.meta.env.VITE_BASE_URL;
 
 onMounted(async () => {
   loading.value = true;
-  if (authStore.token) {
-    await userStore.getProfile();
-    await recipeStore.getRecipe(Number(route.params.id));
-  }
+  await fetchingData();
   loading.value = false;
 });
+
+const fetchingData = async () => {
+  if (authStore.token) {
+    await userStore.findProfile();
+    isLiked.value = await likeStore.findOne(Number(route.params.id));
+  }
+  await recipeStore.findOne(Number(route.params.id));
+};
+
+const like = async () => {
+  if (!isLiked.value) {
+    await likeStore.create(recipeStore.recipe.id);
+  } else {
+    await likeStore.delete(recipeStore.recipe.id);
+  }
+  fetchingData();
+};
 </script>

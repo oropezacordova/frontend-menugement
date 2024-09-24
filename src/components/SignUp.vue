@@ -32,7 +32,7 @@
               type="text"
               placeholder="Username"
               class="w-full px-2 py-1 rounded-lg ring-2 ring-amber-600 focus:outline-none focus:ring-amber-800"
-              v-model="signup.username"
+              v-model="createUserDto.username"
               required
             />
           </div>
@@ -43,7 +43,7 @@
               type="email"
               placeholder="Email"
               class="w-full px-2 py-1 rounded-lg ring-2 ring-amber-600 focus:outline-none focus:ring-amber-800"
-              v-model="signup.email"
+              v-model="createUserDto.email"
               required
             />
           </div>
@@ -54,7 +54,7 @@
               type="password"
               placeholder="Password"
               class="w-full px-2 py-1 rounded-lg ring-2 ring-amber-600 focus:outline-none focus:ring-amber-800"
-              v-model="signup.password"
+              v-model="createUserDto.password"
               required
             />
           </div>
@@ -71,7 +71,8 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthStore, type SignUp } from "@/stores/AuthStore";
+import { useAuthStore } from "@/stores/AuthStore";
+import { useUserStore, type CreateUserDto } from "@/stores/UserStore";
 import { reactive, ref } from "vue";
 
 const emit = defineEmits<{
@@ -79,7 +80,8 @@ const emit = defineEmits<{
 }>();
 const open = ref(false);
 const authStore = useAuthStore();
-const signup = reactive<SignUp>({
+const userStore = useUserStore();
+const createUserDto = reactive<CreateUserDto>({
   username: "",
   email: "",
   password: "",
@@ -87,7 +89,7 @@ const signup = reactive<SignUp>({
 
 const login = async () => {
   try {
-    await authStore.signUp(signup);
+    await userStore.create(createUserDto);
     close();
   } catch (error) {
     console.log(error);
@@ -96,9 +98,9 @@ const login = async () => {
 
 const close = () => {
   open.value = false;
-  signup.username = "";
-  signup.email = "";
-  signup.password = "";
+  createUserDto.username = "";
+  createUserDto.email = "";
+  createUserDto.password = "";
   emit("update:openDropdown", false);
 };
 </script>

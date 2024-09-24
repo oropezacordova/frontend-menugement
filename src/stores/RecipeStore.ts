@@ -42,21 +42,21 @@ export const useRecipeStore = defineStore("RecipeStore", {
     recipe: {} as Recipe,
   }),
   actions: {
-    async getRecipes() {
+    async findAll() {
       const response = await axios.get<Recipe[]>(
         "http://localhost:8080/recipes"
       );
       this.recipes = response.data;
     },
 
-    async getRecipe(id: number) {
+    async findOne(id: number) {
       const response = await axios.get<Recipe>(
         `http://localhost:8080/recipes/${id}`
       );
       this.recipe = response.data;
     },
 
-    async addRecipe(recipe: CreateRecipe, files: File[]) {
+    async create(recipe: CreateRecipe, files: File[]) {
       const response = await axios.post<Recipe>(
         "http://localhost:8080/recipes",
         {
@@ -72,10 +72,11 @@ export const useRecipeStore = defineStore("RecipeStore", {
           },
         }
       );
-      this.upload(response.data.id, files);
+      await this.upload(response.data.id, files);
+      this.findAll();
     },
 
-    async updateRecipe(id: number, recipe: UpdateRecipe, files: File[]) {
+    async update(id: number, recipe: UpdateRecipe, files: File[]) {
       await axios.patch<Recipe>(
         `http://localhost:8080/recipes/${id}`,
         {
@@ -92,7 +93,8 @@ export const useRecipeStore = defineStore("RecipeStore", {
           },
         }
       );
-      this.upload(id, files);
+      await this.upload(id, files);
+      this.findOne(id);
     },
 
     async upload(id: number, files: File[]) {
@@ -109,9 +111,6 @@ export const useRecipeStore = defineStore("RecipeStore", {
           },
         }
       );
-
-      this.getRecipe(id);
-      this.getRecipes();
     },
   },
 });

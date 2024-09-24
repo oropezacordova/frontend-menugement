@@ -38,6 +38,6 @@ const categoryStore = useCategoryStore();
 const open = ref(false);
 
 onMounted(async () => {
-  await categoryStore.getCategories();
+  await categoryStore.findAll();
 });
 </script>

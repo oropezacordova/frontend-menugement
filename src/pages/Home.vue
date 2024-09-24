@@ -11,14 +11,17 @@
         type="text"
         placeholder="Search Recipes"
         v-model="search"
-        class="w-full px-2 py-1 rounded-lg ring-2 ring-amber-600 focus:outline-none focus:ring-amber-800 text-sm"
+        class="w-full px-2 py-1 text-sm rounded-lg ring-2 ring-amber-600 focus:outline-none focus:ring-amber-800"
         autocomplete="off"
       />
     </div>
     <div v-if="loading" class="flex items-center justify-center">
       <i class="pi pi-spin pi-spinner text-amber-900"></i>
     </div>
-    <div class="flex max-sm:justify-center" v-else-if="filteredRecipes.length > 0">
+    <div
+      class="flex max-sm:justify-center"
+      v-else-if="filteredRecipes.length > 0"
+    >
       <div
         class="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
       >
@@ -45,9 +48,13 @@ const search = ref("");
 
 onMounted(async () => {
   loading.value = true;
-  await recipeStore.getRecipes();
+  await fetchData();
   loading.value = false;
 });
+
+const fetchData = async () => {
+  await recipeStore.findAll();
+};
 
 const filteredRecipes = computed(() => {
   if (search.value.length > 0) {

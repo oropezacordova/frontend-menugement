@@ -10,7 +10,7 @@
         type="text"
         placeholder="Search Recipes"
         v-model="search"
-        class="w-full px-2 py-1 rounded-lg ring-2 ring-amber-600 focus:outline-none focus:ring-amber-800 text-sm"
+        class="w-full px-2 py-1 text-sm rounded-lg ring-2 ring-amber-600 focus:outline-none focus:ring-amber-800"
         autocomplete="off"
       />
     </div>
@@ -43,12 +43,6 @@ const route = useRoute();
 const loading = ref(false);
 const search = ref("");
 
-const fetchCategory = async (id: string | string[]) => {
-  loading.value = true;
-  await categoryStore.getCategory(Number(id));
-  loading.value = false;
-};
-
 onMounted(async () => {
   await fetchCategory(route.params.id);
 });
@@ -60,6 +54,12 @@ watch(
     search.value = "";
   }
 );
+
+const fetchCategory = async (id: string | string[]) => {
+  loading.value = true;
+  await categoryStore.findOne(Number(id));
+  loading.value = false;
+};
 
 const filteredRecipes = computed(() => {
   if (search.value.length > 0) {

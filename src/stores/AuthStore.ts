@@ -7,12 +7,6 @@ export interface Credentials {
   password: string;
 }
 
-export interface SignUp {
-  username: string;
-  email: string;
-  password: string;
-}
-
 export interface Token {
   accessToken: string;
 }
@@ -22,7 +16,7 @@ export const useAuthStore = defineStore("auth", {
     token: Cookies.get("accessToken") as string | null,
   }),
   actions: {
-    async login(creadentials: Credentials) {
+    async singIn(creadentials: Credentials) {
       const response = await axios.post<Token>(
         "http://localhost:8080/auth/login",
         {
@@ -35,13 +29,6 @@ export const useAuthStore = defineStore("auth", {
         secure: true,
       });
       this.token = response.data.accessToken;
-    },
-    async signUp(signUp: SignUp) {
-      await axios.post<void>("http://localhost:8080/users", {
-        username: signUp.username,
-        email: signUp.email,
-        password: signUp.password,
-      });
     },
     removeToken() {
       Cookies.remove("accessToken");

@@ -14,13 +14,13 @@ export const useCategoryStore = defineStore("CategoryStore", {
     category: {} as Category,
   }),
   actions: {
-    async getCategories() {
+    async findAll() {
       const response = await axios.get<Category[]>(
         "http://localhost:8080/categories"
       );
       this.categories = response.data;
     },
-    async getCategory(id: number) {
+    async findOne(id: number) {
       const response = await axios.get<Category>(
         `http://localhost:8080/categories/${id}`
       );

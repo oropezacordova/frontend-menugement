@@ -40,7 +40,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import { useAuthStore } from "@/stores/AuthStore";
-import LogIn from "./LogIn.vue";
+import LogIn from "./Login.vue";
 import SignUp from "./SignUp.vue";
 import LogOut from "./LogOut.vue";
 

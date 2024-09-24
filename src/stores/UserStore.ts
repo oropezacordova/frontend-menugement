@@ -12,13 +12,19 @@ export interface User {
   updated_at: Date;
 }
 
+export interface CreateUserDto {
+  username: string;
+  email: string;
+  password: string;
+}
+
 export const useUserStore = defineStore("UserStore", {
   state: () => ({
     users: [] as User[],
     user: {} as User,
   }),
   actions: {
-    async getProfile() {
+    async findProfile() {
       const response = await axios.get<User>(
         "http://localhost:8080/users/profile",
         {
@@ -28,6 +34,13 @@ export const useUserStore = defineStore("UserStore", {
         }
       );
       this.user = response.data;
+    },
+    async create(createUserDto: CreateUserDto) {
+      await axios.post<void>("http://localhost:8080/users", {
+        username: createUserDto.username,
+        email: createUserDto.email,
+        password: createUserDto.password,
+      });
     },
   },
 });

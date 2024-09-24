@@ -1,7 +1,7 @@
 <template>
   <button
     class="flex gap-2 px-2 py-1 text-sm font-medium text-white rounded-md bg-amber-600"
-    @click="open = !open"
+    @click="openModal"
     v-if="authStore.token"
   >
     Add Recipe
@@ -194,9 +194,14 @@ const recipe = reactive<CreateRecipe>({
   category: "",
 });
 
-onMounted(async () => {
-  await categoryStore.getCategories();
-});
+const openModal = async () => {
+  open.value = true;
+  fetchingData();
+};
+
+const fetchingData = async () => {
+  await categoryStore.findAll();
+};
 
 const addFiles = (event: Event) => {
   const arrayFiles = (event.target as HTMLInputElement).files;
@@ -207,7 +212,7 @@ const addFiles = (event: Event) => {
 
 const addRecipe = async () => {
   try {
-    await recipeStore.addRecipe(recipe, files.value);
+    await recipeStore.create(recipe, files.value);
     close();
   } catch (error) {
     console.log(error);
